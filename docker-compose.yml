@@ -1,0 +1,46 @@
+services:
+  ollama-cpu:
+    image: ollama/ollama:latest
+    container_name: cdq-assistant-ollama
+    profiles: ["cpu"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_storage:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ollama-init
+    profiles: ["cpu"]
+    depends_on:
+      ollama-cpu:
+        condition: service_healthy
+        required: false
+    volumes:
+      - ollama_storage:/root/.ollama
+    environment:
+      - OLLAMA_HOST=http://cdq-assistant-ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Waiting for Ollama server..."
+        sleep 10
+        echo "Pulling qwen3:4b model..."
+        ollama pull qwen3:4b
+        if [ $? -eq 0 ]; then
+          echo "Model qwen3:4b downloaded successfully!"
+          ollama list
+        else
+          echo "Failed to download model"
+          exit 1
+        fi
+    restart: "no"
+
+volumes:
+  ollama_storage:

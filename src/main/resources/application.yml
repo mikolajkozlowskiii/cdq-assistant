@@ -2,7 +2,7 @@ spring:
   application:
     name: assistant
   profiles:
-    active: openai
+    active: ollama
 
 country:
   api:

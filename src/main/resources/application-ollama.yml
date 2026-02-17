@@ -1,0 +1,5 @@
+ollama:
+  model-name: ${OLLAMA_CHAT_MODEL:qwen3:4b}
+  temperature: ${OLLAMA_TEMPERATURE:0.0}
+  timeout: ${OLLAMA_TIMEOUT:1000}
+  base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
