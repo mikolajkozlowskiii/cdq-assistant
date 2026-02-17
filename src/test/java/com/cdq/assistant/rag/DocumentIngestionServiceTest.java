@@ -1,19 +1,23 @@
 package com.cdq.assistant.rag;
 
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+import dev.langchain4j.store.embedding.EmbeddingSearchResult;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
@@ -33,18 +37,24 @@ class DocumentIngestionServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         documentIngestionService = new DocumentIngestionService(embeddingStore, embeddingModel);
-        setField("test-document.txt");
+        setField("knowledgeBaseDir", "cdq-knowledge-base");
+        setField("fileGlob", "*.*");
+        setField("chunkSize", 1000);
+        setField("chunkOverlap", 100);
     }
 
-    private void setField(Object value) throws Exception {
-        Field field = DocumentIngestionService.class.getDeclaredField("documentPath");
+    private void setField(String fieldName, Object value) throws Exception {
+        Field field = DocumentIngestionService.class.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(documentIngestionService, value);
     }
 
     @Test
-    void shouldClearStoreAndIngestDocument() {
+    void shouldIngestNewDocument() {
         // given
+        when(embeddingModel.embed("probe")).thenReturn(Response.from(embedding));
+        when(embeddingStore.search(any(EmbeddingSearchRequest.class)))
+                .thenReturn(new EmbeddingSearchResult<>(List.of()));
         when(embeddingModel.embedAll(anyList()))
                 .thenReturn(Response.from(List.of(embedding)));
 
@@ -52,21 +62,35 @@ class DocumentIngestionServiceTest {
         documentIngestionService.ingest();
 
         // then
-        InOrder inOrder = inOrder(embeddingStore);
-        inOrder.verify(embeddingStore).removeAll();
-        inOrder.verify(embeddingStore).addAll(anyList(), anyList());
+        verify(embeddingStore).addAll(anyList(), anyList());
     }
 
     @Test
-    void shouldNotIngestWhenDocumentPathIsInvalid() throws Exception {
+    void shouldSkipAlreadyIngestedDocument() {
         // given
-        setField("nonexistent-file.txt");
+        when(embeddingModel.embed("probe")).thenReturn(Response.from(embedding));
+        EmbeddingMatch<TextSegment> existingMatch = new EmbeddingMatch<>(
+                0.5, "id1", embedding, TextSegment.from("existing content"));
+        when(embeddingStore.search(any(EmbeddingSearchRequest.class)))
+                .thenReturn(new EmbeddingSearchResult<>(List.of(existingMatch)));
 
         // when
         documentIngestionService.ingest();
 
         // then
-        verify(embeddingStore, never()).removeAll();
         verify(embeddingStore, never()).addAll(anyList(), anyList());
+    }
+
+    @Test
+    void shouldDoNothingWhenDirectoryDoesNotExist() throws Exception {
+        // given
+        setField("knowledgeBaseDir", "nonexistent-directory");
+
+        // when
+        documentIngestionService.ingest();
+
+        // then
+        verify(embeddingStore, never()).addAll(anyList(), anyList());
+        verify(embeddingModel, never()).embed("probe");
     }
 }

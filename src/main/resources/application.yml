@@ -24,6 +24,9 @@ pgvector:
   table: ${PGVECTOR_TABLE:embeddings}
 
 rag:
-  document-path: ${RAG_DOCUMENT_PATH:cdq-fraud-guard.txt}
+  knowledge-base-dir: ${RAG_KNOWLEDGE_BASE_DIR:cdq-knowledge-base}
+  file-glob: ${RAG_FILE_GLOB:*.*}
+  chunk-size: ${RAG_CHUNK_SIZE:1000}
+  chunk-overlap: ${RAG_CHUNK_OVERLAP:100}
   max-results: ${RAG_MAX_RESULTS:2}
   min-score: ${RAG_MIN_SCORE:0.5}
