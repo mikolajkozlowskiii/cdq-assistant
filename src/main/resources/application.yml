@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: assistant
+  profiles:
+    active: openai
+
+country:
+  api:
+    base-url: ${COUNTRY_API_BASE_URL:https://restcountries.com/v3.1}
+    country-by-name-path: ${COUNTRY_API_PATH:/name/{name}?fullText=true}
