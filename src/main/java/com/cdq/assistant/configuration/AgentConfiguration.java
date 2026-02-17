@@ -1,6 +1,7 @@
 package com.cdq.assistant.configuration;
 
 import com.cdq.assistant.assistant.AssistantAgent;
+import com.cdq.assistant.tool.CdqKnowledgeTool;
 import com.cdq.assistant.tool.CountryTool;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.service.AiServices;
@@ -14,12 +15,13 @@ public class AgentConfiguration {
 
     @Bean
     public AssistantAgent assistantAgent(ChatModel chatModel,
-                                         CountryTool countryTool)
+                                         CountryTool countryTool,
+                                         CdqKnowledgeTool cdqKnowledgeTool)
     {
         log.info("Building AssistantAgent with ChatModel, CountryTool, CdqKnowledgeTool, and McpToolProvider");
         AssistantAgent agent = AiServices.builder(AssistantAgent.class)
                 .chatModel(chatModel)
-                .tools(countryTool)
+                .tools(countryTool, cdqKnowledgeTool)
                 .build();
         log.info("AssistantAgent initialized successfully");
         return agent;

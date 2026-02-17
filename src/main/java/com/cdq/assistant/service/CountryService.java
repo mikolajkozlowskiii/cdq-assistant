@@ -21,7 +21,7 @@ public class CountryService {
 
     public String fetchCountryData(String countryName) {
         log.info("Fetching country data for: {}", countryName);
-        String result = restTemplate.getForObject(countryByNamePath, String.class, countryName);
+        final String result = restTemplate.getForObject(countryByNamePath, String.class, countryName);
         log.info("Successfully fetched country data for: {}", countryName);
         log.debug("Country data: {}", result);
         return result;

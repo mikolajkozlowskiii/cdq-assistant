@@ -1,0 +1,28 @@
+CDQ Fraud Guard
+
+CDQ Fraud Guard is a cloud-based solution developed by CDQ AG that helps organizations detect and prevent fraud in their business partner master data. It is designed to protect companies from financial losses, regulatory penalties, and reputational damage caused by fraudulent or manipulated business partner records.
+
+Key Features:
+- Real-time fraud detection: CDQ Fraud Guard continuously monitors business partner data for signs of fraud, manipulation, or suspicious activity.
+- Pattern recognition: The solution uses advanced algorithms and machine learning to identify known fraud patterns such as fake companies, shell entities, and identity theft.
+- Cross-referencing with trusted sources: Business partner records are validated against authoritative external data sources, including commercial registers, sanctions lists, and other compliance databases.
+- Risk scoring: Each business partner is assigned a fraud risk score based on multiple indicators, enabling organizations to prioritize their review efforts.
+- Anomaly detection: The system identifies unusual changes in master data that may indicate fraudulent manipulation, such as sudden address changes, modified bank details, or altered ownership structures.
+
+Use Cases:
+- Onboarding new business partners: During the creation of a new business partner record, CDQ Fraud Guard checks the data for consistency and validity, flagging suspicious entries before they enter the system.
+- Ongoing monitoring: Existing business partner records are continuously monitored for changes that may indicate fraud or data manipulation.
+- Compliance and audit: CDQ Fraud Guard supports regulatory compliance by providing an audit trail of all fraud checks and their results.
+- Duplicate detection: The solution identifies duplicate business partner records that may have been created intentionally to facilitate fraud.
+
+Integration:
+CDQ Fraud Guard integrates with major ERP systems, including SAP, and can be accessed via REST APIs. It is part of the broader CDQ Cloud Platform, which offers additional data quality and governance services.
+
+Benefits:
+- Reduces financial losses from business partner fraud
+- Improves data quality and trustworthiness of master data
+- Supports compliance with anti-money laundering (AML) and know-your-customer (KYC) regulations
+- Provides transparent and auditable fraud detection processes
+- Scales to handle large volumes of business partner data across global organizations
+
+CDQ AG is headquartered in Switzerland and Germany, and serves enterprise customers worldwide with its data quality and governance solutions.

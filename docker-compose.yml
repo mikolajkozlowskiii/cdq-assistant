@@ -1,8 +1,26 @@
 services:
-  ollama-cpu:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: cdq-assistant-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./pg-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ollama:
     image: ollama/ollama:latest
     container_name: cdq-assistant-ollama
-    profiles: ["cpu"]
     ports:
       - "11434:11434"
     volumes:
@@ -14,14 +32,39 @@ services:
       retries: 3
       start_period: 10s
 
-  ollama-init:
+  ollama-init-embeddings:
     image: ollama/ollama:latest
-    container_name: ollama-init
+    container_name: ollama-init-embeddings
+    depends_on:
+      ollama:
+        condition: service_healthy
+    volumes:
+      - ollama_storage:/root/.ollama
+    environment:
+      - OLLAMA_HOST=http://cdq-assistant-ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Waiting for Ollama server..."
+        sleep 10
+        echo "Pulling nomic-embed-text embedding model..."
+        ollama pull nomic-embed-text
+        if [ $? -eq 0 ]; then
+          echo "Embedding model downloaded successfully!"
+          ollama list
+        else
+          echo "Failed to download embedding model"
+          exit 1
+        fi
+    restart: "no"
+
+  ollama-init-llm:
+    image: ollama/ollama:latest
+    container_name: ollama-init-llm
     profiles: ["cpu"]
     depends_on:
-      ollama-cpu:
+      ollama:
         condition: service_healthy
-        required: false
     volumes:
       - ollama_storage:/root/.ollama
     environment:
@@ -43,4 +86,5 @@ services:
     restart: "no"
 
 volumes:
+  postgres_data:
   ollama_storage:
