@@ -93,4 +93,17 @@ class DocumentIngestionServiceTest {
         verify(embeddingStore, never()).addAll(anyList(), anyList());
         verify(embeddingModel, never()).embed("probe");
     }
+
+    @Test
+    void shouldDoNothingWhenNoDocumentsFound() throws Exception {
+        // given
+        setField("fileGlob", "*.nonexistent");
+
+        // when
+        documentIngestionService.ingest();
+
+        // then
+        verify(embeddingStore, never()).addAll(anyList(), anyList());
+        verify(embeddingModel, never()).embed("probe");
+    }
 }
