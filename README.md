@@ -47,7 +47,7 @@ docker compose --profile cpu up --build
 
 Uses `qwen3:4b` as the LLM. No API key needed. The first startup will take a few minutes to download the models.
 
-#### Ollama on GPU (Linux with NVIDIA)
+#### Ollama on GPU (NVIDIA)
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile gpu up --build
