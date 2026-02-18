@@ -232,6 +232,24 @@ Response:
 }
 ```
 
+#### Out-of-scope question
+
+Request:
+```json
+{
+    "message": "What ingredients are on pizza?"
+}
+```
+
+Response:
+```json
+{
+    "answer": "I don't have that information.",
+    "timestamp": "2026-02-18T21:52:10.050023084Z",
+    "usedSources": []
+}
+```
+
 ## Configuration
 
 All configuration is done via environment variables. See `application.yml` for defaults.
