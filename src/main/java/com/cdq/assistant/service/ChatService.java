@@ -31,9 +31,6 @@ public class ChatService {
     }
 
     private List<SourceInfo> extractSources(Result<String> result) {
-        if (result.toolExecutions() == null) {
-            return List.of();
-        }
         return result.toolExecutions().stream()
                 .map(this::classify)
                 .toList();
