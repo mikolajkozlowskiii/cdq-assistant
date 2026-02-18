@@ -1,0 +1,3 @@
+[submodule "mcp-weather"]
+	path = mcp-weather
+	url = https://github.com/semdin/mcp-weather.git

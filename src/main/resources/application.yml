@@ -30,3 +30,10 @@ rag:
   chunk-overlap: ${RAG_CHUNK_OVERLAP:100}
   max-results: ${RAG_MAX_RESULTS:2}
   min-score: ${RAG_MIN_SCORE:0.5}
+
+mcp:
+  weather:
+    command: ${MCP_WEATHER_COMMAND:npx}
+    working-directory: ${MCP_WEATHER_DIR:./mcp-weather}
+    api-key: ${WEATHER_API_KEY}
+    api-url: ${WEATHER_API_URL:http://api.weatherapi.com/v1/current.json}

@@ -85,6 +85,28 @@ services:
         fi
     restart: "no"
 
+  app:
+    build: .
+    container_name: cdq-assistant-app
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-ollama}
+      PGVECTOR_HOST: db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://cdq-assistant-ollama:11434}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      WEATHER_API_KEY: ${WEATHER_API_KEY}
+      WEATHER_API_URL: ${WEATHER_API_URL}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   ollama_storage:

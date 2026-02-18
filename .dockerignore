@@ -1,0 +1,6 @@
+.git
+.env
+target/
+.idea/
+mcp-weather/.git
+mcp-weather/node_modules
