@@ -85,6 +85,40 @@ services:
         fi
     restart: "no"
 
+  ollama-init-llm-gpu:
+    image: ollama/ollama:latest
+    container_name: ollama-init-llm-gpu
+    profiles: ["gpu"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    volumes:
+      - ollama_storage:/root/.ollama
+    environment:
+      - OLLAMA_HOST=http://cdq-assistant-ollama:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Waiting for Ollama server..."
+        sleep 10
+        echo "Pulling qwen3:4b model (GPU)..."
+        ollama pull qwen3:4b
+        if [ $? -eq 0 ]; then
+          echo "Model qwen3:4b downloaded successfully!"
+          ollama list
+        else
+          echo "Failed to download model"
+          exit 1
+        fi
+    restart: "no"
+
   app:
     build: .
     container_name: cdq-assistant-app

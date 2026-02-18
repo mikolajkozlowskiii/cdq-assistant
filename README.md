@@ -37,29 +37,41 @@ WEATHER_API_URL=http://api.weatherapi.com/v1/current.json
 
 ### 3. Run with Docker Compose
 
+The app supports three run modes. Ollama is always started for embeddings (RAG), but the **chat model** depends on the chosen mode.
+
+#### Ollama on CPU (default)
+
 ```bash
-docker compose up --build
+docker compose --profile cpu up --build
 ```
 
-By default, the app uses **Ollama** (`qwen3:4b`) as the LLM — no external API key needed. The first startup will take a few minutes to download the embedding and LLM models.
+Uses `qwen3:4b` as the LLM. No API key needed. The first startup will take a few minutes to download the models.
 
-The API will be available at `http://localhost:8080`.
+#### Ollama on GPU (Linux with NVIDIA)
 
-## Using OpenAI Instead of Ollama
+```bash
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile gpu up --build
+```
 
-To use OpenAI as the chat model, add `OPENAI_API_KEY` to your `.env` file:
+Same as CPU mode but with NVIDIA GPU passthrough for faster inference. Requires the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+
+#### OpenAI
+
+Add `OPENAI_API_KEY` to your `.env` file:
 
 ```properties
 OPENAI_API_KEY=<your-openai-api-key>
 ```
 
-Then start the app with the `openai` profile:
-
 ```bash
 SPRING_PROFILES_ACTIVE=openai docker compose up --build
 ```
 
-This uses `gpt-4o` by default. The embedding model (Ollama) is still used for RAG regardless of the active profile.
+Uses `gpt-4o` by default. Ollama is still used for embeddings (RAG) but not as the chat model.
+
+---
+
+The API will be available at `http://localhost:8080`.
 
 ## API Usage
 
